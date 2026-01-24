@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAGBench Evaluation Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #334155;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .header-badge {
+            background: #1e293b;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1e293b;
+            border: none;
+            border-radius: 8px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            background: #334155;
+        }
+
+        .tab.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* Cards */
+        .card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-card {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .metric-delta {
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .metric-delta.positive {
+            color: #22c55e;
+        }
+
+        .metric-delta.negative {
+            color: #ef4444;
+        }
+
+        /* Runs List */
+        .runs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .run-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            padding: 15px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .run-item:hover {
+            background: #1a2744;
+        }
+
+        .run-item.selected {
+            border-color: #3b82f6;
+        }
+
+        .run-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .run-name {
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .run-meta {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .run-metrics {
+            display: flex;
+            gap: 20px;
+        }
+
+        .run-metric {
+            text-align: right;
+        }
+
+        .run-metric-value {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .run-metric-label {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        /* Compare Section */
+        .compare-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .compare-select {
+            margin-bottom: 20px;
+        }
+
+        .compare-select select {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        /* Details Table */
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .details-table th,
+        .details-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        .details-table th {
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .details-table tr:hover {
+            background: #0f172a;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: #e2e8f0;
+            font-size: 0.85rem;
+        }
+
+        /* Charts */
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        /* Status Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .badge-warning {
+            background: rgba(234, 179, 8, 0.2);
+            color: #eab308;
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #94a3b8;
+        }
+
+        /* Breakdown Section */
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .breakdown-section h4 {
+            margin-bottom: 15px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #334155;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-name {
+            color: #e2e8f0;
+        }
+
+        .breakdown-value {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 8px;
+            background: #0f172a;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RAGBench Evaluation Dashboard</h1>
+            <span class="header-badge" id="run-count">Loading...</span>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="overview">Overview</button>
+            <button class="tab" data-tab="compare">Compare Runs</button>
+            <button class="tab" data-tab="details">Query Details</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview-tab" class="tab-content">
+            <div class="card" id="latest-run-card">
+                <div class="card-header">
+                    <span class="card-title">Latest Run</span>
+                    <span class="badge badge-info" id="latest-run-name">-</span>
+                </div>
+                <div class="metrics-grid" id="latest-metrics">
+                    <div class="metric-card">
+                        <div class="metric-value" id="latest-mrr">-</div>
+                        <div class="metric-label">MRR</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="latest-ndcg">-</div>
+                        <div class="metric-label">nDCG</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="latest-recall1">-</div>
+                        <div class="metric-label">Recall@1</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="latest-recall5">-</div>
+                        <div class="metric-label">Recall@5</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="latest-recall10">-</div>
+                        <div class="metric-label">Recall@10</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="latest-docmrr">-</div>
+                        <div class="metric-label">Doc MRR</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">All Runs</span>
+                </div>
+                <div class="runs-list" id="runs-list">
+                    <div class="empty-state">
+                        <h3>No evaluation runs yet</h3>
+                        <p>Run <code>npm run evaluate</code> to create your first evaluation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compare Tab -->
+        <div id="compare-tab" class="tab-content hidden">
+            <div class="compare-container">
+                <div class="card">
+                    <div class="compare-select">
+                        <label>Baseline Run</label>
+                        <select id="compare-run1"></select>
+                    </div>
+                    <div id="compare-metrics-1"></div>
+                </div>
+                <div class="card">
+                    <div class="compare-select">
+                        <label>Compare Run</label>
+                        <select id="compare-run2"></select>
+                    </div>
+                    <div id="compare-metrics-2"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Metric Changes</span>
+                </div>
+                <div class="metrics-grid" id="compare-deltas"></div>
+            </div>
+        </div>
+
+        <!-- Details Tab -->
+        <div id="details-tab" class="tab-content hidden">
+            <div class="card">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Run:</label>
+                        <select id="details-run-select"></select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Type:</label>
+                        <select id="filter-type">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Source:</label>
+                        <select id="filter-source">
+                            <option value="">All Sources</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Result:</label>
+                        <select id="filter-result">
+                            <option value="">All</option>
+                            <option value="success">Found in Top 1</option>
+                            <option value="partial">Found in Top 5</option>
+                            <option value="fail">Not Found</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="breakdown-grid" id="breakdown-section">
+                    <div class="breakdown-section">
+                        <h4>By Query Type</h4>
+                        <div id="breakdown-by-type"></div>
+                    </div>
+                    <div class="breakdown-section">
+                        <h4>By Query Source</h4>
+                        <div id="breakdown-by-source"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Query Results</span>
+                    <span id="query-count" class="badge badge-info">0 queries</span>
+                </div>
+                <table class="details-table">
+                    <thead>
+                        <tr>
+                            <th>Query</th>
+                            <th>Type</th>
+                            <th>Source</th>
+                            <th>MRR</th>
+                            <th>Recall@5</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="details-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let runs = [];
+        let currentRun = null;
+        let selectedRuns = { run1: null, run2: null };
+
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = {
+            overview: document.getElementById('overview-tab'),
+            compare: document.getElementById('compare-tab'),
+            details: document.getElementById('details-tab'),
+        };
+
+        // Tab switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                Object.values(tabContents).forEach(tc => tc.classList.add('hidden'));
+                tabContents[tab.dataset.tab].classList.remove('hidden');
+            });
+        });
+
+        // Format percentage
+        function formatPercent(value) {
+            return (value * 100).toFixed(1) + '%';
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+
+        // Load runs from API
+        async function loadRuns() {
+            try {
+                const response = await fetch('/api/runs');
+                runs = await response.json();
+                updateRunCount();
+                renderRunsList();
+                updateLatestRun();
+                populateSelects();
+            } catch (error) {
+                console.error('Failed to load runs:', error);
+            }
+        }
+
+        // Update run count badge
+        function updateRunCount() {
+            document.getElementById('run-count').textContent = `${runs.length} runs`;
+        }
+
+        // Render runs list
+        function renderRunsList() {
+            const container = document.getElementById('runs-list');
+
+            if (runs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No evaluation runs yet</h3>
+                        <p>Run <code>npm run evaluate</code> to create your first evaluation</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = runs.map(run => `
+                <div class="run-item" data-name="${run.name}">
+                    <div class="run-info">
+                        <span class="run-name">${run.name}</span>
+                        <span class="run-meta">${formatDate(run.timestamp)} · ${run.totalQueries} queries · ${run.mode}</span>
+                    </div>
+                    <div class="run-metrics">
+                        <div class="run-metric">
+                            <div class="run-metric-value">${formatPercent(run.aggregateMetrics.mrr)}</div>
+                            <div class="run-metric-label">MRR</div>
+                        </div>
+                        <div class="run-metric">
+                            <div class="run-metric-value">${formatPercent(run.aggregateMetrics.recall_at_5)}</div>
+                            <div class="run-metric-label">Recall@5</div>
+                        </div>
+                        <div class="run-metric">
+                            <div class="run-metric-value">${formatPercent(run.aggregateMetrics.ndcg)}</div>
+                            <div class="run-metric-label">nDCG</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add click handlers
+            container.querySelectorAll('.run-item').forEach(item => {
+                item.addEventListener('click', () => loadRunDetails(item.dataset.name));
+            });
+        }
+
+        // Update latest run metrics
+        function updateLatestRun() {
+            if (runs.length === 0) return;
+
+            const latest = runs[0];
+            document.getElementById('latest-run-name').textContent = latest.name;
+            document.getElementById('latest-mrr').textContent = formatPercent(latest.aggregateMetrics.mrr);
+            document.getElementById('latest-ndcg').textContent = formatPercent(latest.aggregateMetrics.ndcg);
+            document.getElementById('latest-recall1').textContent = formatPercent(latest.aggregateMetrics.recall_at_1);
+            document.getElementById('latest-recall5').textContent = formatPercent(latest.aggregateMetrics.recall_at_5);
+            document.getElementById('latest-recall10').textContent = formatPercent(latest.aggregateMetrics.recall_at_10);
+            document.getElementById('latest-docmrr').textContent = formatPercent(latest.aggregateMetrics.docMrr);
+        }
+
+        // Populate select dropdowns
+        function populateSelects() {
+            const selects = [
+                document.getElementById('compare-run1'),
+                document.getElementById('compare-run2'),
+                document.getElementById('details-run-select'),
+            ];
+
+            selects.forEach(select => {
+                select.innerHTML = runs.map(run =>
+                    `<option value="${run.name}">${run.name}</option>`
+                ).join('');
+            });
+
+            // Set up compare listeners
+            document.getElementById('compare-run1').addEventListener('change', updateComparison);
+            document.getElementById('compare-run2').addEventListener('change', updateComparison);
+            document.getElementById('details-run-select').addEventListener('change', loadSelectedRunDetails);
+
+            // Load initial comparison
+            if (runs.length >= 2) {
+                document.getElementById('compare-run1').value = runs[1].name;
+                document.getElementById('compare-run2').value = runs[0].name;
+                updateComparison();
+            }
+
+            // Load initial details
+            if (runs.length > 0) {
+                loadSelectedRunDetails();
+            }
+        }
+
+        // Load run details
+        async function loadRunDetails(runName) {
+            try {
+                const response = await fetch(`/api/runs/${runName}`);
+                currentRun = await response.json();
+                renderRunDetails();
+            } catch (error) {
+                console.error('Failed to load run details:', error);
+            }
+        }
+
+        // Update comparison view
+        async function updateComparison() {
+            const run1 = document.getElementById('compare-run1').value;
+            const run2 = document.getElementById('compare-run2').value;
+
+            if (!run1 || !run2) return;
+
+            try {
+                const response = await fetch(`/api/compare?run1=${run1}&run2=${run2}`);
+                const data = await response.json();
+
+                // Render metrics for run1
+                renderCompareMetrics('compare-metrics-1', data.run1.aggregateMetrics);
+
+                // Render metrics for run2
+                renderCompareMetrics('compare-metrics-2', data.run2.aggregateMetrics);
+
+                // Render deltas
+                renderDeltas(data.deltas);
+            } catch (error) {
+                console.error('Failed to compare runs:', error);
+            }
+        }
+
+        // Render metrics in compare view
+        function renderCompareMetrics(containerId, metrics) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">${formatPercent(metrics.mrr)}</div>
+                        <div class="metric-label">MRR</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${formatPercent(metrics.ndcg)}</div>
+                        <div class="metric-label">nDCG</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${formatPercent(metrics.recall_at_5)}</div>
+                        <div class="metric-label">Recall@5</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render delta cards
+        function renderDeltas(deltas) {
+            const container = document.getElementById('compare-deltas');
+            const metrics = ['mrr', 'ndcg', 'recall_at_1', 'recall_at_5', 'recall_at_10'];
+
+            container.innerHTML = metrics.map(key => {
+                const delta = deltas[key];
+                const isPositive = delta > 0;
+                const deltaClass = delta === 0 ? '' : (isPositive ? 'positive' : 'negative');
+                const sign = delta > 0 ? '+' : '';
+
+                return `
+                    <div class="metric-card">
+                        <div class="metric-value ${deltaClass}">${sign}${formatPercent(delta)}</div>
+                        <div class="metric-label">${key.replace(/_/g, '@')}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load selected run for details tab
+        async function loadSelectedRunDetails() {
+            const runName = document.getElementById('details-run-select').value;
+            if (!runName) return;
+
+            await loadRunDetails(runName);
+            renderBreakdown();
+            renderDetailsTable();
+        }
+
+        // Render breakdown sections
+        function renderBreakdown() {
+            if (!currentRun) return;
+
+            // By type
+            const typeContainer = document.getElementById('breakdown-by-type');
+            typeContainer.innerHTML = Object.entries(currentRun.metricsByType).map(([type, metrics]) => `
+                <div class="breakdown-item">
+                    <span class="breakdown-name">${type} (${metrics.count})</span>
+                    <span class="breakdown-value">${formatPercent(metrics.recall_at_5)}</span>
+                </div>
+            `).join('');
+
+            // By source
+            const sourceContainer = document.getElementById('breakdown-by-source');
+            sourceContainer.innerHTML = Object.entries(currentRun.metricsBySource).map(([source, metrics]) => `
+                <div class="breakdown-item">
+                    <span class="breakdown-name">${source} (${metrics.count})</span>
+                    <span class="breakdown-value">${formatPercent(metrics.recall_at_5)}</span>
+                </div>
+            `).join('');
+
+            // Populate filter options
+            const typeFilter = document.getElementById('filter-type');
+            typeFilter.innerHTML = '<option value="">All Types</option>' +
+                Object.keys(currentRun.metricsByType).map(type =>
+                    `<option value="${type}">${type}</option>`
+                ).join('');
+
+            const sourceFilter = document.getElementById('filter-source');
+            sourceFilter.innerHTML = '<option value="">All Sources</option>' +
+                Object.keys(currentRun.metricsBySource).map(source =>
+                    `<option value="${source}">${source}</option>`
+                ).join('');
+        }
+
+        // Render details table
+        function renderDetailsTable() {
+            if (!currentRun) return;
+
+            const typeFilter = document.getElementById('filter-type').value;
+            const sourceFilter = document.getElementById('filter-source').value;
+            const resultFilter = document.getElementById('filter-result').value;
+
+            let filtered = currentRun.detailedResults;
+
+            if (typeFilter) {
+                filtered = filtered.filter(r => r.queryType === typeFilter);
+            }
+            if (sourceFilter) {
+                filtered = filtered.filter(r => r.querySource === sourceFilter);
+            }
+            if (resultFilter) {
+                if (resultFilter === 'success') {
+                    filtered = filtered.filter(r => r.metrics.recall_at_1 === 1);
+                } else if (resultFilter === 'partial') {
+                    filtered = filtered.filter(r => r.metrics.recall_at_1 === 0 && r.metrics.recall_at_5 === 1);
+                } else if (resultFilter === 'fail') {
+                    filtered = filtered.filter(r => r.metrics.recall_at_5 === 0);
+                }
+            }
+
+            document.getElementById('query-count').textContent = `${filtered.length} queries`;
+
+            const tbody = document.getElementById('details-table-body');
+            tbody.innerHTML = filtered.slice(0, 100).map(result => {
+                let statusBadge = '';
+                if (result.metrics.recall_at_1 === 1) {
+                    statusBadge = '<span class="badge badge-success">Found</span>';
+                } else if (result.metrics.recall_at_5 === 1) {
+                    statusBadge = '<span class="badge badge-warning">Top 5</span>';
+                } else {
+                    statusBadge = '<span class="badge badge-info">Miss</span>';
+                }
+
+                return `
+                    <tr>
+                        <td title="${result.query}">${result.query.substring(0, 60)}...</td>
+                        <td>${result.queryType || '-'}</td>
+                        <td>${result.querySource || '-'}</td>
+                        <td>${formatPercent(result.metrics.mrr)}</td>
+                        <td>${formatPercent(result.metrics.recall_at_5)}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Add filter event listeners
+        document.getElementById('filter-type').addEventListener('change', renderDetailsTable);
+        document.getElementById('filter-source').addEventListener('change', renderDetailsTable);
+        document.getElementById('filter-result').addEventListener('change', renderDetailsTable);
+
+        // Initial load
+        loadRuns();
+    </script>
+</body>
+</html>

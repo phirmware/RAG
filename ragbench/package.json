@@ -1,0 +1,21 @@
+{
+  "name": "ragbench-evaluation",
+  "version": "1.0.0",
+  "description": "RAG evaluation using Vectara Open RAGBench dataset",
+  "type": "module",
+  "scripts": {
+    "download": "node download_dataset.js",
+    "ingest": "node ingest.js",
+    "evaluate": "node evaluate.js",
+    "serve": "node server.js",
+    "full-run": "npm run download && npm run ingest && npm run evaluate"
+  },
+  "dependencies": {
+    "@qdrant/js-client-rest": "^1.16.2",
+    "compromise": "^14.14.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "gpt-tokenizer": "^3.4.0",
+    "openai": "^6.16.0"
+  }
+}

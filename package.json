@@ -1,0 +1,19 @@
+{
+  "name": "rag",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "@qdrant/js-client-rest": "^1.16.2",
+    "compromise": "^14.14.5",
+    "dotenv": "^17.2.3",
+    "gpt-tokenizer": "^3.4.0",
+    "openai": "^6.16.0"
+  }
+}

@@ -1,0 +1,27 @@
+# Environment variables (contains API keys)
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Downloaded data (large files)
+ragbench/data/corpus/
+ragbench/data/*.json
+ragbench/data/sample/
+
+# Evaluation runs (optional - you may want to keep these)
+# ragbench/runs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

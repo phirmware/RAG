@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Evaluation Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            opacity: 0.9;
+        }
+
+        .metrics-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .metrics-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: #444;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .card h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-text {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RAG Retrieval Metrics</h1>
+            <p>Evaluation dashboard for retrieval quality assessment</p>
+        </header>
+
+        <div id="content">
+            <div class="loading">Loading evaluation results...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadResults() {
+            try {
+                const response = await fetch('evaluation_results.json');
+                if (!response.ok) {
+                    throw new Error('Run evaluation.js first to generate results');
+                }
+                const data = await response.json();
+                renderDashboard(data);
+            } catch (error) {
+                document.getElementById('content').innerHTML = `
+                    <div class="error">
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p class="info-text">Run "node evaluation/evaluation.js" to generate evaluation_results.json</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderDashboard(data) {
+            const content = document.getElementById('content');
+
+            content.innerHTML = `
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="card">
+                        <h3>Total Questions</h3>
+                        <div class="value">${data.totalQuestions}</div>
+                    </div>
+                    <div class="card">
+                        <h3>Keyword Coverage</h3>
+                        <div class="value">${(data.aggregateMetrics.keywordCoverage * 100).toFixed(1)}%</div>
+                    </div>
+                    <div class="card">
+                        <h3>MRR</h3>
+                        <div class="value">${(data.aggregateMetrics.mrr * 100).toFixed(1)}%</div>
+                    </div>
+                    <div class="card">
+                        <h3>nDCG</h3>
+                        <div class="value">${(data.aggregateMetrics.ndcg * 100).toFixed(1)}%</div>
+                    </div>
+                </div>
+
+                <!-- Aggregate Metrics Bar Chart -->
+                <div class="metrics-section">
+                    <h2>Retrieval Metrics Overview</h2>
+                    <div class="chart-container">
+                        <canvas id="aggregateChart"></canvas>
+                    </div>
+                    <p class="info-text">
+                        <strong>Keyword Coverage:</strong> % of expected keywords found in retrieved chunks |
+                        <strong>MRR:</strong> Mean Reciprocal Rank (how early relevant results appear) |
+                        <strong>nDCG:</strong> Normalized Discounted Cumulative Gain (ranking quality)
+                    </p>
+                </div>
+
+                <!-- Metrics by Category -->
+                <div class="metrics-section">
+                    <h2>Metrics by Category</h2>
+                    <div class="chart-container" style="height: 400px;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Category Comparison -->
+                <div class="metrics-section">
+                    <h2>Category Breakdown</h2>
+                    <div class="chart-row">
+                        <div class="chart-container">
+                            <canvas id="categoryMRRChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="categoryNDCGChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Aggregate Metrics Chart
+            new Chart(document.getElementById('aggregateChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Keyword Coverage', 'MRR', 'nDCG'],
+                    datasets: [{
+                        label: 'Score (%)',
+                        data: [
+                            data.aggregateMetrics.keywordCoverage * 100,
+                            data.aggregateMetrics.mrr * 100,
+                            data.aggregateMetrics.ndcg * 100
+                        ],
+                        backgroundColor: [
+                            'rgba(102, 126, 234, 0.8)',
+                            'rgba(118, 75, 162, 0.8)',
+                            'rgba(240, 147, 43, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(102, 126, 234, 1)',
+                            'rgba(118, 75, 162, 1)',
+                            'rgba(240, 147, 43, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: v => v + '%' }
+                        }
+                    }
+                }
+            });
+
+            // Category Grouped Bar Chart
+            const categories = Object.keys(data.metricsByCategory);
+            const categoryColors = [
+                'rgba(102, 126, 234, 0.8)',
+                'rgba(118, 75, 162, 0.8)',
+                'rgba(240, 147, 43, 0.8)'
+            ];
+
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [
+                        {
+                            label: 'Keyword Coverage',
+                            data: categories.map(c => data.metricsByCategory[c].keywordCoverage * 100),
+                            backgroundColor: categoryColors[0],
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'MRR',
+                            data: categories.map(c => data.metricsByCategory[c].mrr * 100),
+                            backgroundColor: categoryColors[1],
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'nDCG',
+                            data: categories.map(c => data.metricsByCategory[c].ndcg * 100),
+                            backgroundColor: categoryColors[2],
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: v => v + '%' }
+                        }
+                    }
+                }
+            });
+
+            // MRR by Category Horizontal Bar
+            new Chart(document.getElementById('categoryMRRChart'), {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        label: 'MRR (%)',
+                        data: categories.map(c => data.metricsByCategory[c].mrr * 100),
+                        backgroundColor: 'rgba(118, 75, 162, 0.8)',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'MRR by Category' },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: v => v + '%' }
+                        }
+                    }
+                }
+            });
+
+            // nDCG by Category Horizontal Bar
+            new Chart(document.getElementById('categoryNDCGChart'), {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        label: 'nDCG (%)',
+                        data: categories.map(c => data.metricsByCategory[c].ndcg * 100),
+                        backgroundColor: 'rgba(240, 147, 43, 0.8)',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: 'nDCG by Category' },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { callback: v => v + '%' }
+                        }
+                    }
+                }
+            });
+        }
+
+        loadResults();
+    </script>
+</body>
+</html>
