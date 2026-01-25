@@ -396,6 +396,270 @@
             border-radius: 4px;
             transition: width 0.3s;
         }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: #1e293b;
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px 24px;
+            border-bottom: 1px solid #334155;
+            position: sticky;
+            top: 0;
+            background: #1e293b;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f8fafc;
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #f8fafc;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-section {
+            margin-bottom: 24px;
+        }
+
+        .modal-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .query-meta {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .query-full-text {
+            background: #0f172a;
+            padding: 16px;
+            border-radius: 8px;
+            color: #e2e8f0;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .ground-truth-box {
+            background: #0f172a;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 3px solid #22c55e;
+        }
+
+        .ground-truth-item {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .ground-truth-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .ground-truth-label {
+            color: #94a3b8;
+            width: 100px;
+            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+
+        .ground-truth-value {
+            color: #e2e8f0;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .ground-truth-answer {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #334155;
+        }
+
+        .ground-truth-answer .ground-truth-value {
+            font-family: inherit;
+            line-height: 1.5;
+        }
+
+        .modal-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+        }
+
+        .modal-metric {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .modal-metric-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .modal-metric-value.success {
+            color: #22c55e;
+        }
+
+        .modal-metric-value.fail {
+            color: #ef4444;
+        }
+
+        .modal-metric-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .chunk-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chunk-item {
+            background: #0f172a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .chunk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #1a2744;
+        }
+
+        .chunk-rank {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chunk-position {
+            background: #334155;
+            color: #e2e8f0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .chunk-position.match {
+            background: #22c55e;
+            color: white;
+        }
+
+        .chunk-score {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .chunk-ids {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8rem;
+        }
+
+        .chunk-id {
+            color: #94a3b8;
+        }
+
+        .chunk-id span {
+            color: #e2e8f0;
+            font-family: monospace;
+        }
+
+        .chunk-text {
+            padding: 16px;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .chunk-item.is-match {
+            border: 2px solid #22c55e;
+        }
+
+        .match-indicator {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Clickable rows */
+        .details-table tbody tr {
+            cursor: pointer;
+        }
+
+        .details-table tbody tr:hover {
+            background: #1a2744;
+        }
     </style>
 </head>
 <body>
@@ -549,6 +813,42 @@
                 </table>
             </div>
         </div>
+
+        <!-- Query Detail Modal -->
+        <div id="query-modal" class="modal-overlay hidden">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title" id="modal-query-text">Query text here...</div>
+                    <button class="modal-close" id="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Query Info -->
+                    <div class="modal-section">
+                        <div class="modal-section-title">Query Information</div>
+                        <div class="query-meta" id="modal-query-meta"></div>
+                        <div class="query-full-text" id="modal-query-full"></div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="modal-section">
+                        <div class="modal-section-title">Retrieval Metrics</div>
+                        <div class="modal-metrics-grid" id="modal-metrics"></div>
+                    </div>
+
+                    <!-- Ground Truth -->
+                    <div class="modal-section">
+                        <div class="modal-section-title">Ground Truth</div>
+                        <div class="ground-truth-box" id="modal-ground-truth"></div>
+                    </div>
+
+                    <!-- Retrieved Chunks -->
+                    <div class="modal-section">
+                        <div class="modal-section-title">Retrieved Chunks</div>
+                        <div class="chunk-list" id="modal-chunks"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -586,6 +886,16 @@
             const date = new Date(dateStr);
             return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
         }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Store filtered results for click handling
+        let currentFilteredResults = [];
 
         // Load runs from API
         async function loadRuns() {
@@ -843,10 +1153,13 @@
                 }
             }
 
+            // Store filtered results for click handling
+            currentFilteredResults = filtered.slice(0, 100);
+
             document.getElementById('query-count').textContent = `${filtered.length} queries`;
 
             const tbody = document.getElementById('details-table-body');
-            tbody.innerHTML = filtered.slice(0, 100).map(result => {
+            tbody.innerHTML = currentFilteredResults.map((result, index) => {
                 let statusBadge = '';
                 if (result.metrics.recall_at_1 === 1) {
                     statusBadge = '<span class="badge badge-success">Found</span>';
@@ -857,8 +1170,8 @@
                 }
 
                 return `
-                    <tr>
-                        <td title="${result.query}">${result.query.substring(0, 60)}...</td>
+                    <tr data-index="${index}" class="query-row">
+                        <td title="${escapeHtml(result.query)}">${escapeHtml(result.query.substring(0, 60))}...</td>
                         <td>${result.queryType || '-'}</td>
                         <td>${result.querySource || '-'}</td>
                         <td>${formatPercent(result.metrics.mrr)}</td>
@@ -867,12 +1180,153 @@
                     </tr>
                 `;
             }).join('');
+
+            // Add click handlers to rows
+            tbody.querySelectorAll('.query-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    const index = parseInt(row.dataset.index);
+                    const queryResult = currentFilteredResults[index];
+                    if (queryResult) {
+                        showQueryDetail(queryResult);
+                    }
+                });
+            });
         }
 
         // Add filter event listeners
         document.getElementById('filter-type').addEventListener('change', renderDetailsTable);
         document.getElementById('filter-source').addEventListener('change', renderDetailsTable);
         document.getElementById('filter-result').addEventListener('change', renderDetailsTable);
+
+        // ============================================
+        // Query Detail Modal
+        // ============================================
+
+        const modal = document.getElementById('query-modal');
+        const modalClose = document.getElementById('modal-close');
+
+        // Close modal handlers
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Show query details in modal
+        function showQueryDetail(queryResult) {
+            // Set query text
+            document.getElementById('modal-query-text').textContent = queryResult.query;
+            document.getElementById('modal-query-full').textContent = queryResult.query;
+
+            // Set query meta badges
+            const metaContainer = document.getElementById('modal-query-meta');
+            metaContainer.innerHTML = `
+                <span class="badge badge-info">${queryResult.queryType || 'unknown'}</span>
+                <span class="badge badge-info">${queryResult.querySource || 'unknown'}</span>
+            `;
+
+            // Set metrics
+            const metricsContainer = document.getElementById('modal-metrics');
+            const m = queryResult.metrics;
+            metricsContainer.innerHTML = `
+                <div class="modal-metric">
+                    <div class="modal-metric-value ${m.mrr === 1 ? 'success' : m.mrr === 0 ? 'fail' : ''}">${formatPercent(m.mrr)}</div>
+                    <div class="modal-metric-label">MRR</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value ${m.ndcg === 1 ? 'success' : m.ndcg === 0 ? 'fail' : ''}">${formatPercent(m.ndcg)}</div>
+                    <div class="modal-metric-label">nDCG</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value ${m.recall_at_1 === 1 ? 'success' : 'fail'}">${m.recall_at_1 === 1 ? 'Yes' : 'No'}</div>
+                    <div class="modal-metric-label">Recall@1</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value ${m.recall_at_3 === 1 ? 'success' : 'fail'}">${m.recall_at_3 === 1 ? 'Yes' : 'No'}</div>
+                    <div class="modal-metric-label">Recall@3</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value ${m.recall_at_5 === 1 ? 'success' : 'fail'}">${m.recall_at_5 === 1 ? 'Yes' : 'No'}</div>
+                    <div class="modal-metric-label">Recall@5</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value ${m.recall_at_10 === 1 ? 'success' : 'fail'}">${m.recall_at_10 === 1 ? 'Yes' : 'No'}</div>
+                    <div class="modal-metric-label">Recall@10</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value">${formatPercent(m.precision_at_1)}</div>
+                    <div class="modal-metric-label">Precision@1</div>
+                </div>
+                <div class="modal-metric">
+                    <div class="modal-metric-value">${formatPercent(m.precision_at_5)}</div>
+                    <div class="modal-metric-label">Precision@5</div>
+                </div>
+            `;
+
+            // Set ground truth
+            const gtContainer = document.getElementById('modal-ground-truth');
+            const gt = queryResult.groundTruth;
+            gtContainer.innerHTML = `
+                <div class="ground-truth-item">
+                    <span class="ground-truth-label">Document ID:</span>
+                    <span class="ground-truth-value">${gt.docId}</span>
+                </div>
+                <div class="ground-truth-item">
+                    <span class="ground-truth-label">Section ID:</span>
+                    <span class="ground-truth-value">${gt.sectionId}</span>
+                </div>
+                ${gt.answer ? `
+                <div class="ground-truth-answer">
+                    <div class="ground-truth-item">
+                        <span class="ground-truth-label">Answer:</span>
+                    </div>
+                    <div class="ground-truth-value" style="margin-top: 8px;">${gt.answer}</div>
+                </div>
+                ` : ''}
+            `;
+
+            // Set retrieved chunks
+            const chunksContainer = document.getElementById('modal-chunks');
+            const chunks = queryResult.retrievedChunks || [];
+
+            if (chunks.length === 0) {
+                chunksContainer.innerHTML = '<div class="empty-state"><p>No chunks retrieved</p></div>';
+            } else {
+                chunksContainer.innerHTML = chunks.map((chunk, index) => {
+                    const isMatch = chunk.docId === gt.docId && chunk.sectionId === gt.sectionId;
+                    return `
+                        <div class="chunk-item ${isMatch ? 'is-match' : ''}">
+                            <div class="chunk-header">
+                                <div class="chunk-rank">
+                                    <span class="chunk-position ${isMatch ? 'match' : ''}">${index + 1}</span>
+                                    <span class="chunk-score">Score: ${chunk.score.toFixed(4)}</span>
+                                    ${isMatch ? '<span class="match-indicator">MATCH</span>' : ''}
+                                </div>
+                                <div class="chunk-ids">
+                                    <span class="chunk-id">Doc: <span>${chunk.docId}</span></span>
+                                    <span class="chunk-id">Section: <span>${chunk.sectionId}</span></span>
+                                </div>
+                            </div>
+                            <div class="chunk-text">${escapeHtml(chunk.text)}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            openModal();
+        }
 
         // Initial load
         loadRuns();
