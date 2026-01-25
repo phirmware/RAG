@@ -1,0 +1,20 @@
+[
+  {
+    "name": "nomic-embed-text",
+    "timestamp": "2026-01-25T10:41:39.892Z",
+    "mode": "sample",
+    "totalQueries": 100,
+    "aggregateMetrics": {
+      "mrr": 0.6157857142857143,
+      "docMrr": 0.9231785714285715,
+      "ndcg": 0.9130297272286718,
+      "recall_at_1": 0.5,
+      "recall_at_3": 0.69,
+      "recall_at_5": 0.75,
+      "recall_at_10": 0.87,
+      "precision_at_1": 0.5,
+      "precision_at_3": 0.29333333333333317,
+      "precision_at_5": 0.20999999999999985
+    }
+  }
+]
