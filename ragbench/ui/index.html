@@ -1250,19 +1250,19 @@
                     <div class="modal-metric-label">nDCG</div>
                 </div>
                 <div class="modal-metric">
-                    <div class="modal-metric-value ${m.recall_at_1 === 1 ? 'success' : 'fail'}">${m.recall_at_1 === 1 ? 'Yes' : 'No'}</div>
+                    <div class="modal-metric-value ${m.recall_at_1 === 1 ? 'success' : 'fail'}">${formatPercent(m.recall_at_1)}</div>
                     <div class="modal-metric-label">Recall@1</div>
                 </div>
                 <div class="modal-metric">
-                    <div class="modal-metric-value ${m.recall_at_3 === 1 ? 'success' : 'fail'}">${m.recall_at_3 === 1 ? 'Yes' : 'No'}</div>
+                    <div class="modal-metric-value ${m.recall_at_3 === 1 ? 'success' : 'fail'}">${formatPercent(m.recall_at_3)}</div>
                     <div class="modal-metric-label">Recall@3</div>
                 </div>
                 <div class="modal-metric">
-                    <div class="modal-metric-value ${m.recall_at_5 === 1 ? 'success' : 'fail'}">${m.recall_at_5 === 1 ? 'Yes' : 'No'}</div>
+                    <div class="modal-metric-value ${m.recall_at_5 === 1 ? 'success' : 'fail'}">${formatPercent(m.recall_at_5)}</div>
                     <div class="modal-metric-label">Recall@5</div>
                 </div>
                 <div class="modal-metric">
-                    <div class="modal-metric-value ${m.recall_at_10 === 1 ? 'success' : 'fail'}">${m.recall_at_10 === 1 ? 'Yes' : 'No'}</div>
+                    <div class="modal-metric-value ${m.recall_at_10 === 1 ? 'success' : 'fail'}">${formatPercent(m.recall_at_10)}</div>
                     <div class="modal-metric-label">Recall@10</div>
                 </div>
                 <div class="modal-metric">

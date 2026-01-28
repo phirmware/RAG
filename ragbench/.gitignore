@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Downloaded dataset (users download their own)
+data/
+
+# Evaluation runs (generated locally)
+runs/*.json
+!runs/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

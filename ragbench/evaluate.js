@@ -14,14 +14,13 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
-// Load env from parent RAG directory
-dotenv.config({ path: path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '.env') });
-
-import qdrant from '../qdrant.js';
-import { embedText } from '../utils.js';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+import qdrant from './lib/qdrant.js';
+import { embedText } from './lib/utils.js';
 
 const DATA_DIR = path.join(__dirname, 'data');
 const RUNS_DIR = path.join(__dirname, 'runs');

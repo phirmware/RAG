@@ -32,6 +32,22 @@ const PROVIDERS = {
       apiKey: 'ollama',  // Required by library but ignored by Ollama
     }),
   },
+  qwen3: {
+    model: 'qwen3-embedding:latest',
+    dimensions: 4096,
+    client: () => new OpenAI({
+      baseURL: 'http://localhost:11434/v1',
+      apiKey: 'ollama',  // Required by library but ignored by Ollama
+    }),
+  },
+  embeddinggemma: {
+    model: 'embeddinggemma:latest',
+    dimensions: 768,
+    client: () => new OpenAI({
+      baseURL: 'http://localhost:11434/v1',
+      apiKey: 'ollama',  // Required by library but ignored by Ollama
+    }),
+  }
 };
 
 // Validate provider

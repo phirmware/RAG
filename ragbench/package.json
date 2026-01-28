@@ -1,14 +1,29 @@
 {
-  "name": "ragbench-evaluation",
+  "name": "ragbench",
   "version": "1.0.0",
-  "description": "RAG evaluation using Vectara Open RAGBench dataset",
+  "description": "A benchmarking framework for evaluating RAG pipelines using the Vectara Open RAGBench dataset",
   "type": "module",
+  "main": "server.js",
   "scripts": {
     "download": "node download_dataset.js",
     "ingest": "node ingest.js",
     "evaluate": "node evaluate.js",
     "serve": "node server.js",
     "full-run": "npm run download && npm run ingest && npm run evaluate"
+  },
+  "keywords": [
+    "rag",
+    "retrieval-augmented-generation",
+    "evaluation",
+    "benchmark",
+    "vector-search",
+    "embeddings",
+    "nlp"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@qdrant/js-client-rest": "^1.16.2",
